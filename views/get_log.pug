@@ -1,0 +1,63 @@
+extends layout.pug
+ 
+block content
+  h1 Как получить ссылку на лог игры
+  div.demo(style="text-align: justify;")
+    p Ссылка на лог игры имеет вид:
+      br
+      i http://tenhou.net/0/?log=2017012116gm-0001-0000-05a1bd94&tw=3
+      br
+      | для нас важно узнать часть в параметре log - уникальный код лога.
+      br
+      | В зависимости от игрового клиента код можно получить по-разному.
+    h2 Android-клиент
+    div Этот клиент представляет собой обычный браузер. Последние 40 ссылок хранятся в хранилище этого браузера.
+    div Взять хранилище можно только при наличии root-доступа. Любым файловым менеджером копируем его на sdcard из внутренней памяти по пути:
+      br
+      i /data/data/net.tenhou.WebBrowserYYYYMMDD/app_webview/Local Storage/file__0.localstorage
+    div Какие-то числа в пути могут быть другие но ничего страшного. Файл представляет собой sqlite3 базу данных, из которой можно 
+      | взять что нам нужно. Пример для windows:
+      ol
+        li Скачиваем 
+          a(href="https://www.sqlite.org/2017/sqlite-tools-win32-x86-3180000.zip") консольный клиент
+        li Выгружаем инфу командой:
+          br
+          b: i sqlite3 %1 -noheader -list "select * from ItemTable where key like 'log%%'" > %1.txt
+        li Нужные нам коды в строках вида:
+          br
+          i log33|{"type":137,"lobby":0,"log":"2017022402gm-0089-0000-51d23e14","oya":3, ...
+          br
+          | где в кавычках после "log" - код лога
+    h2 Chrome
+    div Все тоже самое что и выше только путь вида:
+      ol
+        li Мобильный Chrome
+          br
+          i /data/data/com.android.chrome/app_chrome/Default/Local Storage/http_tenhou_net_0.localstorage
+        li Chrome под Windows
+          br
+          i %User%/AppData/Local/Google/Chrome/User Data/Default/Local Storage/http_tenhou_net_0.localstorage
+    h2 Остальное
+    div Все перечислять проблематично - есть куча браузеров, клиентов.
+      br
+      | В помощь можно посоветовать ресурс на 
+      a(href="https://github.com/NegativeMjark/tenhou-log") GitHub
+      | , где можно найти скрипт для выгрузки базы ссылок логов (tenhou-download-game-xml.py).
+      br
+      | Так же там есть полная информация по формату лога.
+    h2 Для разработчиков
+    div У меня лог парсится и отдается шаблонизатору 
+      a(href="https://pugjs.org") pug
+      | , который уже выводит как надо.
+      br
+      | Весь лог преобразуется в JSON-структуру, которую можно поглядеть есть добавить параметр json=1 к GET-запросу 
+      | прямого линка пайфы.
+    div P.S. В парсере еще не сделаны все мои хотелки, работа продолжается. Как будет все готов по моему мнению опубликую на GitHub.
+    div Пока в планах есть несколько пунктов:
+      ol
+        li подписи к некоторым ключевым тайлам руки (рон, цумо)
+        li возможность формирования сразу в pdf (разбивка по страница, оглавление)
+        li кнопки поделиться в соцсети???
+        li возможно сбор статистики в tenhou (типа 
+          a(href="http://arcturus.su/tenhou/ranking/") arcturus
+          |  с возможностью привязки показанных логов

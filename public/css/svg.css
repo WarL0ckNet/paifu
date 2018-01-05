@@ -1,0 +1,66 @@
+.tile {
+	width: 27px;
+	height: 38px;
+}
+
+.kanup,
+.kandown {
+	width: 18px;
+	height: 25px;
+}
+
+.kanup {
+	position: relative;
+	top: 0;
+	right: 4px;
+	z-index: 0;
+}
+
+.kandown {
+	position: relative;
+	top: -15px;
+	right: -4px;
+	z-index: 1;
+}
+
+.down {
+	width: 15px;
+	height: 38px;
+}
+
+.tenbo {
+	width: 68px;
+	height: 9px;
+}
+
+.face,
+.back {
+	filter: url(#inset-shadow);
+}
+
+.face {
+	fill: #ffffff;
+}
+
+.back {
+	fill: #ffba1e;
+}
+
+.rotate,
+.rotate1,
+.rotate2 {
+	width: 38px;
+	height: 38px;
+}
+
+.rotate {
+	transform: rotate(-90deg) translate(-5px, 0px);
+}
+
+.rotate1 {
+	transform: rotate(-90deg) translate(6px, 0px);
+}
+
+.rotate2 {
+	transform: rotate(-90deg) translate(17px, 0px);
+}

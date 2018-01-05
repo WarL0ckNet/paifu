@@ -1,0 +1,45 @@
+extends layout.pug
+ 
+block content
+  h1 Пайфу ( 牌譜paifu)
+  div.demo(style="text-align: justify;") Пошаговая запись игры, в виде таблицы.
+    div &nbsp;На игровых серверах маджонга, обычно каждая сыгранная игра записывается в память и ее потом можно посмотреть в качестве видеореплея с пошаговым просмотром.
+    div &nbsp;Так же может быть предоставлена пошаговая запись в качестве таблицы, которая называется 
+      b Paifu 
+      | (предоставляется не на всех серверах и на разных серверах, имеет свои обозначения записи).
+    div &nbsp;Paifu – "Ручная История", является отчетом развития руки, и отображается в виде картинки на которой показана последовательность всех взятых тайлов и дискардов сделанных игроком.
+    div &nbsp;Пайфу напоминает термин Кифу (棋譜 kifu), который является пошаговым отчетом, сделанным для игры shogi (японские шахматы).
+    div &nbsp;В отличии от видеореплея, в пайфу сразу видна стартовая рука, и конечная.
+      br
+      | &nbsp;Можно увидеть все дискарды и все произведенные замены, что позволяет быстрее понять, развитие рук в игре.
+      br
+      | &nbsp;Пайфу удобно еще тем, что его можно распечатать на листке буаги и изучать в удобное время или передать кому-нибудь.
+  div.demo
+    #error
+      if(error.length>0)
+        div.error-msg= error
+    form(action="/" method="post")
+      table
+        tr
+          td(align="right") Paifu language
+          td
+            select.select(name="lang")
+              option(value="ru" selected) Russian
+              option(value="en") English
+              option(value="jp") Japan
+        tr
+          td(align="right") URL 
+            a(href="http://www.tenhou.net") tenhou.net
+            | &nbsp;log
+          td  
+            input.input(type="text" name="url" placeholder="Log URL")
+        tr
+          td(colspan='2').right
+           button(type="submit") Обработать
+    h2 Полезное
+    div
+      a(href="/files/paifu.pdf") Как читать пайфу
+      | , вырезка из 
+      a(href="http://dora.ucoz.net/") книги
+      | (стр.907 версия 8 книги)
+    div: a(href="/get_log") Как получить ссылку на лог игры и прочее

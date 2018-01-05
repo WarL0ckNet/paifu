@@ -1,0 +1,38 @@
+doctype html
+html
+  head
+    title Example SVG mahjong tiles
+  link(rel='stylesheet', href='/css/svg.css')
+  body
+    svg(width="0" height="0")
+      defs
+        filter#inset-shadow
+          feOffset(dx="0" dy="0")
+          feGaussianBlur(stdDeviation="1.5" result="offset-blur")
+          feComposite(operator="out" in="SourceGraphic" in2="offset-blur" result="inverse")
+          feFlood(flood-color="black" flood-opacity="1" result="color")
+          feComposite(operator="in" in="color" in2="inverse" result="shadow")
+          feComposite(operator="over" in="shadow" in2="SourceGraphic")
+    svg.rotate: use.face(xlink:href="/img/tiles.svg#m1")
+    | &nbsp;
+    svg.tile: use.face(xlink:href="/img/tiles.svg#m1")
+    svg.tile: use.face(xlink:href="/img/tiles.svg#m9")
+    svg.tile: use.face(xlink:href="/img/tiles.svg#p1")
+    svg.tile: use.face(xlink:href="/img/tiles.svg#p9")
+    svg.tile: use.face(xlink:href="/img/tiles.svg#s1")
+    svg.tile: use.face(xlink:href="/img/tiles.svg#s9")
+    svg.tile: use.face(xlink:href="/img/tiles.svg#tan")
+    svg.tile: use.face(xlink:href="/img/tiles.svg#nan")
+    svg.tile: use.face(xlink:href="/img/tiles.svg#xia")
+    svg.tile: use.face(xlink:href="/img/tiles.svg#pei")
+    svg.tile: use.face(xlink:href="/img/tiles.svg#chun")
+    svg.tile: use.face(xlink:href="/img/tiles.svg#haku")
+    svg.tile: use.face(xlink:href="/img/tiles.svg#hatsu")
+    br
+    svg.tenbo: use.face(xlink:href="/img/tiles.svg#t100")
+    svg.tenbo: use.face(xlink:href="/img/tiles.svg#t1k")
+    svg.tenbo: use.face(xlink:href="/img/tiles.svg#t5k")
+    svg.tenbo: use.face(xlink:href="/img/tiles.svg#t10k")
+    br
+    svg.down: use(xlink:href="/img/tiles.svg#down")
+    

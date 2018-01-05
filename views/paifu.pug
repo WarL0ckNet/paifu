@@ -1,0 +1,258 @@
+extends layout.pug
+
+block header
+  link(rel='stylesheet', href='/css/svg.css')
+
+block content
+  svg(width="0" height="0")
+    defs
+      filter#inset-shadow
+        feOffset(dx="0" dy="0")
+        feGaussianBlur(stdDeviation="1.5" result="offset-blur")
+        feComposite(operator="out" in="SourceGraphic" in2="offset-blur" result="inverse")
+        feFlood(flood-color="black" flood-opacity="1" result="color")
+        feComposite(operator="in" in="color" in2="inverse" result="shadow")
+        feComposite(operator="over" in="shadow" in2="SourceGraphic")
+  table.border
+    tr
+      th= str.name
+      th= str.sex
+      th= str.rate
+      th= str.dan
+    each player,ind in data.players
+      tr
+        if (ind == data.diler)
+          td: b= player.name
+        else
+          td= player.name
+        td= str['sex'+player.sex]
+        td= player.rate
+        td= str.dans[player.dan]
+    tr
+      td(colspan='4' align='left')
+        a(href='/?log='+data.log+'&lang='+lang)= str.link
+  each round in data.rounds
+    table.border
+      tr
+        td(style='vertical-align: top')
+          table
+            tr
+              th(colspan='2')
+                h1= str.rounds[round.name]
+            tr
+              td: svg.tenbo: use.face(xlink:href="/img/tiles.svg#t1k")
+              td= round.riichi.count
+            tr  
+              td: svg.tenbo: use.face(xlink:href="/img/tiles.svg#t100")
+              td= round.honba
+            tr
+              td(colspan='2')
+                each dora in round.dora
+                  svg.tile: use.face(xlink:href="/img/tiles.svg#"+dora)
+                - for (var x = 0; x < 5 - round.dora.length; x++)  
+                  svg.tile: use.back(xlink:href="/img/tiles.svg#tile")
+                br  
+                each uradora in round.uradora
+                  svg.tile: use.face(xlink:href="/img/tiles.svg#"+uradora)
+                - for (var x = 0; x < 5 - round.uradora.length; x++)  
+                  svg.tile: use.back(xlink:href="/img/tiles.svg#tile")
+            tr(style="border-top: 1px dotted black;")
+              td(colspan='2' style="text-align: center")
+                table
+                  tr
+                    - for(var s = 0; s < 4; s++)
+                      td.center= str.seat[s]
+                  tr
+                    - for(var s = 0; s < 4; s++)
+                      - var cs = (s+round.diler)%4
+                      td.right(style="border-top: 1px solid black;")= round.score[cs].begin 
+                  tr
+                    - for(var s = 0; s < 4; s++)
+                      - var cs = (s+round.diler)%4
+                      td.right= round.score[cs].diff 
+                  tr
+                    - for(var s = 0; s < 4; s++)
+                      - var cs = (s+round.diler)%4
+                      td.right(style="border-top: 1px solid black;")= round.score[cs].end
+            tr(style="border-top: 1px dotted black;")
+              td(colspan='2' style="text-align: center")
+                if round.draw
+                  h2= str.ryuukyoku.title
+                  if round.draw.type
+                    = str.ryuukyoku[round.draw.type]
+                  if round.draw.tenpai.length > 0
+                    p(style="text-align: left")
+                      b= str.ryuukyoku["tenpai"]+':'
+                      each t,i in round.draw.tenpai
+                        if t.length > 0
+                          br
+                          i= '- '+data.players[i].name
+                    if round.riichi.player.length > 0
+                      p(style="text-align: left")
+                        b= str.reach+':'
+                        each p in round.riichi.player
+                          br
+                          i= '- '+data.players[p].name
+                else if round.win
+                  each w in round.win
+                    p
+                      b= str[w.type]+': '+data.players[w.player].name
+                      if w.type === 'ron'
+                        br
+                        = str.from[data.players[w.player].sex]
+                        br
+                        b= data.players[w.fromPlayer].name
+                    if w.yakulist    
+                      table(width='100%')
+                        tr
+                          th(colspan='2')= str.yakulist
+                          - var cnt = 0  
+                        each y in w.yakulist
+                          tr
+                            td(align='left'): b= str.yaku[y.yaku]
+                            td(align='rigth'): i= y.han
+                          - var cnt = cnt + y.han  
+                        tr
+                          td(colspan='2' style="border-top: 1px solid black;" align='rigth')
+                            if w.limit
+                              = str.limits[w.limit]
+                            else
+                              = cnt+' '+str.han+' '+w.fu+' '+str.fu
+                    else if w.yakuman
+                      table(width='100%')
+                        tr
+                          th= str.limits[w.limit]
+                        each y in w.yakuman
+                          tr
+                            td(align='left'): b= str.yaku[y]
+                    p 
+                      b= str.score+': '+w.points
+                  if round.riichi.player.length > 0
+                    p(style="text-align: left")
+                      b= str.reach+':'
+                      each p in round.riichi.player
+                        br
+                        i= '- '+data.players[p].name
+        td
+          - for(var p = 0; p < 4; p++)
+            - var cp = (p+round.diler)%4
+            table(align='left' width='100%').border
+              tr
+                th(width="20px")= str.seat[p]
+                td(width="10px").nopad: span.vert.call= str.start
+                td(width='500' colspan='2').nopad
+                  table(align='left')
+                    tr
+                      each t in round.hands[cp]
+                        td.nopad: svg.tile: use.face(xlink:href="/img/tiles.svg#"+t)
+              tr
+                td(rowspan="3" style="text-align: center;"): span.name: b= data.players[cp].name
+                td.nopad: span.vert.call= str.draw 
+                td(rowspan="2" colspan='2').nopad
+                  table(align='left')
+                    tr
+                      each t in round.events[cp]
+                        td.nopad
+                         div.event
+                            if t
+                              if t.call
+                                div.ev_call= str[t.call.type]
+                              else  
+                                div.ev_call
+                              if t.tsumogiri
+                                div.ev_draw: svg.down: use(xlink:href="/img/tiles.svg#down")
+                                div.ev_discard: svg.tile: use.face(xlink:href="/img/tiles.svg#"+t.tsumogiri)
+                              else if t.call
+                                if t.call.type === 'kan' || t.call.type === 'chakan'
+                                  div.blank
+                                    svg.kanup: use.face(xlink:href="/img/tiles.svg#"+t.call.tiles[t.call.called])
+                                    svg.kandown: use.face(xlink:href="/img/tiles.svg#"+t.draw)
+                                else
+                                  div.ev_draw: svg.tile: use.face(xlink:href="/img/tiles.svg#"+t.call.tiles[t.call.called])
+                                div.ev_discard: svg.tile: use.face(xlink:href="/img/tiles.svg#"+t.discard)
+                              else
+                                div.ev_draw: svg.tile: use.face(xlink:href="/img/tiles.svg#"+t.draw)
+                                div.ev_discard: svg.tile: use.face(xlink:href="/img/tiles.svg#"+t.discard)
+                              if t.reach  
+                                div.ev_reach= str.reach
+                              else if t.furikomi
+                                div.ev_reach= str.furikomi
+                              else
+                                div.ev_reach
+              tr
+                td.nopad: span.vert.call= str.discard
+              tr                
+                td.nopad: span.vert.call= str.final 
+                td(width='27px' height='54px')
+                  table
+                    tr
+                      if round.win
+                        each winner in round.win
+                          if (winner.player == cp)
+                            each t,i in winner.hand
+                              if i === winner.machi
+                                - var win_tile = t
+                              else
+                                td.nopad: div.win
+                                  div.ev_call
+                                  div.ev_draw: svg.tile: use.face(xlink:href="/img/tiles.svg#"+t)
+                            td.nopad: div.machi
+                            td.nopad: div.win
+                              div.ev_call= str[winner.type]
+                              div.ev_draw: svg.tile: use.face(xlink:href="/img/tiles.svg#"+win_tile)
+                      if round.draw
+                        each t in round.draw.tenpai[cp]
+                          if t
+                            td.nopad: div.win
+                              div.ev_call
+                              div.ev_draw: svg.tile: use.face(xlink:href="/img/tiles.svg#"+t)
+                      each hand, index in round.finish
+                        if (hand.length > 0 && index == cp)
+                          each t in round.finish[cp]
+                            td.nopad: div.win
+                              div.ev_call
+                              div.ev_draw: svg.tile: use.face(xlink:href="/img/tiles.svg#"+t)
+                td(align='left' height='54px')
+                  table(align='left')
+                    tr
+                      each calls, index in round.meld
+                        if (calls.length > 0 && index == cp)
+                          td.blank
+                          each call in calls
+                            if call.type === 'chi'
+                              td.nopad: div.rt_call
+                                div.rt_blank
+                                div.ev_draw: svg.rotate: use.face(xlink:href="/img/tiles.svg#"+call.tiles[call.called])
+                              each t,i in call.tiles
+                                if i != call.called
+                                  td.nopad: div.call
+                                    div.call_blank
+                                    div.ev_draw: svg.tile: use.face(xlink:href="/img/tiles.svg#"+t)
+                            else if call.rotate < 4
+                              each t,i in call.tiles
+                                if call.type != 'chakan' || i < 3
+                                  td.nopad
+                                    if i === call.rotate
+                                      div.rt_call
+                                        if call.type === 'chakan'
+                                          div.ev_draw: svg.rotate1: use.face(xlink:href="/img/tiles.svg#"+t)
+                                          div.ev_draw: svg.rotate2: use.face(xlink:href="/img/tiles.svg#"+t)
+                                        else  
+                                          div.rt_blank
+                                          div.ev_draw: svg.rotate: use.face(xlink:href="/img/tiles.svg#"+t)
+                                    else
+                                      div.call
+                                        div.call_blank
+                                        div.ev_draw: svg.tile: use.face(xlink:href="/img/tiles.svg#"+t)
+                            else      
+                              each t,i in call.tiles
+                                td.nopad: div.call
+                                  div.call_blank
+                                  div.ev_draw: svg.tile
+                                    if i === 0 || i === 3
+                                      use.back(xlink:href="/img/tiles.svg#tile")
+                                    else  
+                                      use.face(xlink:href="/img/tiles.svg#"+t)
+                            td(widht="10px")
+            br            
+    br 
